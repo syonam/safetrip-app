@@ -1,7 +1,6 @@
 import streamlit as st
 from datetime import datetime
 from red_zones import load_zones_from_json, load_airports
-from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from shapely.geometry import Point, LineString
 
@@ -31,9 +30,34 @@ st.title("✈️ SafeTrip – Fly Safer")
 st.markdown("##### Check your flight route and cities for any nearby conflict zones.")
 st.markdown("---")
 
-# About Button (fixed)
+# About Button
 if st.button("ℹ️ About SafeTrip"):
     st.switch_page("1_About.py")
+
+# Country coordinates (replacing geocoder)
+country_coords = {
+    "Afghanistan": (33.9391, 67.7100),
+    "Armenia": (40.0691, 45.0382),
+    "Azerbaijan": (40.1431, 47.5769),
+    "Belarus": (53.7098, 27.9534),
+    "Burkina Faso": (12.2383, -1.5616),
+    "Ethiopia": (9.1450, 40.4897),
+    "Gaza": (31.5018, 34.4663),
+    "Iran": (32.4279, 53.6880),
+    "Iraq": (33.3152, 44.3661),
+    "Israel": (31.0461, 34.8516),
+    "Lebanon": (33.8547, 35.8623),
+    "Libya": (26.3351, 17.2283),
+    "Mali": (17.5707, -3.9962),
+    "Niger": (17.6078, 8.0817),
+    "North Korea": (40.3399, 127.5101),
+    "Russia": (61.5240, 105.3188),
+    "Somalia": (5.1521, 46.1996),
+    "South Sudan": (6.8770, 31.3070),
+    "Sudan": (12.8628, 30.2176),
+    "Syria": (34.8021, 38.9968),
+    "Ukraine": (48.3794, 31.1656)
+}
 
 # Load airports
 @st.cache_data
@@ -57,16 +81,15 @@ if st.button("Check Route Safety ✈️"):
     route_line = LineString([from_coords[::-1], to_coords[::-1]])
     risky_zones = []
 
-    geolocator = Nominatim(user_agent="safetrip-app")
-
     for zone in red_zones:
-        loc = geolocator.geocode(zone['country'])
-        if not loc:
+        country = zone['country']
+        if country not in country_coords:
             continue
-        point = Point(loc.longitude, loc.latitude)
+        lat, lon = country_coords[country]
+        point = Point(lon, lat)
         dist_route = point.distance(route_line) * 111  # Convert degrees to km
-        dist_from = geodesic((loc.latitude, loc.longitude), from_coords).km
-        dist_to = geodesic((loc.latitude, loc.longitude), to_coords).km
+        dist_from = geodesic((lat, lon), from_coords).km
+        dist_to = geodesic((lat, lon), to_coords).km
         if min(dist_route, dist_from, dist_to) <= 500:
             zone['distance_km'] = round(min(dist_route, dist_from, dist_to), 1)
             risky_zones.append(zone)
