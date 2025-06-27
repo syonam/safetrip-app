@@ -1,0 +1,6 @@
+streamlit
+geopy
+shapely
+pandas
+beautifulsoup4
+requests
