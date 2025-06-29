@@ -16,7 +16,7 @@ st.markdown(
     f"""
     <style>
         .stApp {{
-            background: url("https://images.unsplash.com/photo-1504197885-609741792ce7?auto=format&fit=crop&w=1650&q=80") no-repeat center center fixed;
+            background: url("https://wallpapershome.com/images/pages/ico_h/26675.jpg") no-repeat center center fixed;
             background-size: cover;
         }}
         .main-title h1 {{
