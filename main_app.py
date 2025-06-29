@@ -61,14 +61,6 @@ st.markdown("<div class='highlight-block'><h1 class='main-title'>SafeTrip – Fl
             "<p><strong>Check your flight route and cities for any nearby conflict zones.</strong></p></div>",
             unsafe_allow_html=True)
 
-# App title
-with st.container():
-    st.markdown("""<div class='overlay-box'>""", unsafe_allow_html=True)
-    st.markdown("<h1>SafeTrip – Fly Safer</h1>", unsafe_allow_html=True)
-    st.markdown("##### Check your flight route and cities for any nearby conflict zones.")
-    st.markdown("---")
-    st.markdown("""</div>""", unsafe_allow_html=True)
-
 # Static coordinates to avoid API calls
 STATIC_COORDS = {
     "Iran": (32.4279, 53.6880),
