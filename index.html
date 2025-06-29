@@ -1,67 +1,112 @@
+<!-- index.html (Netlify Landing Page) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SafeTrip</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
-      color: white;
       font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
     }
 
     video.bg-video {
       position: fixed;
       top: 0;
       left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
+      width: 100vw;
+      height: 100vh;
       object-fit: cover;
+      z-index: -1;
     }
 
-    .content {
-      position: relative;
-      top: 40%;
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       text-align: center;
     }
 
-    .content h1 {
+    .logo {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
       font-size: 4em;
-      margin: 0;
+      margin-bottom: 10px;
     }
 
-    .launch-btn {
-      padding: 1em 2em;
-      font-size: 1.2em;
-      background: rgba(0,0,0,0.6);
-      border: none;
-      color: white;
-      cursor: pointer;
+    .about {
+      margin: 20px;
+      max-width: 600px;
+      font-size: 1.1em;
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .check-btn {
       margin-top: 20px;
-      transition: background 0.3s ease;
+      padding: 1em 2.5em;
+      font-size: 1.2em;
+      background: #00b4d8;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
     }
 
-    .launch-btn:hover {
-      background: rgba(0,0,0,0.8);
+    .check-btn:hover {
+      background: #0077b6;
+    }
+
+    .plane {
+      position: absolute;
+      width: 100px;
+      bottom: 10%;
+      left: -100px;
+      opacity: 0;
+      transition: transform 2s ease-in-out, opacity 1s;
+    }
+
+    .plane.fly {
+      transform: translateX(120vw);
+      opacity: 1;
     }
   </style>
 </head>
 <body>
-
   <video class="bg-video" autoplay loop muted playsinline>
     <source src="13403854_1080_1920_30fps.mp4" type="video/mp4">
   </video>
 
-  <div class="content">
+  <div class="container">
+    <img src="bolt.png" alt="Bolt Logo" class="logo">
     <h1>SafeTrip</h1>
-    <a href="https://bolt-new-safetrip-app.streamlit.app" target="_blank">
-      <button class="launch-btn">Launch the App</button>
-    </a>
+    <div class="about">
+      <p>SafeTrip was created to give travelers peace of mind by helping them visualize whether their flight route passes near global conflict zones. It was inspired by rising safety concerns in modern air travel and a desire to make flying safer for everyone.</p>
+    </div>
+    <button class="check-btn" onclick="launchPlane()">Check Routes</button>
+    <img src="plane.png" class="plane" id="plane" alt="plane">
   </div>
 
+  <script>
+    function launchPlane() {
+      const plane = document.getElementById("plane");
+      plane.classList.add("fly");
+      setTimeout(() => {
+        window.open("https://your-streamlit-app-link.streamlit.app", "_blank");
+      }, 2000);
+    }
+  </script>
 </body>
 </html>
