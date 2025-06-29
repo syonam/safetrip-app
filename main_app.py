@@ -4,6 +4,7 @@ from red_zones import load_zones_from_json, load_airports
 from geopy.distance import geodesic
 from shapely.geometry import Point, LineString
 import openai
+import pandas as pd
 
 # Configure OpenAI
 openai.api_key = st.secrets["openai_api_key"]
@@ -11,17 +12,29 @@ openai.api_key = st.secrets["openai_api_key"]
 # Page config
 st.set_page_config(page_title="SafeTrip", layout="wide")
 
-# Background styling using hosted plane image
+# Styling with background image, Roboto font, and transparent overlay
 st.markdown(
     f"""
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
         .stApp {{
-            background: url("https://wallpapershome.com/images/pages/ico_h/26675.jpg") no-repeat center center fixed;
+            background: url("plane.jpg") no-repeat center center fixed;
             background-size: cover;
+            font-family: 'Roboto', sans-serif;
         }}
-        .main-title h1 {{
-            color: black !important;
+
+        .overlay-box {{
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1.5rem;
+            border-radius: 12px;
         }}
+
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stButton>button, .stSelectbox label {{
+            font-weight: 700 !important;
+            color: #000000 !important;
+        }}
+
         .scroll-box {{
             max-height: 200px;
             overflow-y: auto;
@@ -36,15 +49,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Logo and title
-col1, col2 = st.columns([1, 10])
-with col1:
-    st.image("black_circle_360x360.png", width=70)
-with col2:
-    st.markdown("<h1 class='main-title'>SafeTrip – Fly Safer</h1>", unsafe_allow_html=True)
-
-st.markdown("##### Check your flight route and cities for any nearby conflict zones.")
-st.markdown("---")
+# App title
+with st.container():
+    st.markdown("""<div class='overlay-box'>""", unsafe_allow_html=True)
+    st.markdown("<h1>SafeTrip – Fly Safer</h1>", unsafe_allow_html=True)
+    st.markdown("##### Check your flight route and cities for any nearby conflict zones.")
+    st.markdown("---")
+    st.markdown("""</div>""", unsafe_allow_html=True)
 
 # Fetch coordinates using OpenAI
 @st.cache_data
@@ -64,18 +75,31 @@ def fetch_country_coordinates(country_name):
         st.warning(f"Could not fetch coordinates for {country_name}: {e}")
         return None, None
 
-# Load airport data
+# Load airport and airline data
 @st.cache_data
 def get_airport_options():
     return load_airports()
 
+@st.cache_data
+def load_airlines():
+    url = "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat"
+    cols = ["Airline ID", "Name", "Alias", "IATA", "ICAO", "Callsign", "Country", "Active"]
+    df = pd.read_csv(url, names=cols, header=None)
+    df = df[df["Active"] == "Y"]
+    airline_list = sorted(df["Name"].dropna().unique().tolist())
+    return airline_list
+
 airports = get_airport_options()
+airline_list = load_airlines()
 
 # UI inputs
-from_city = st.selectbox("From (City)", options=airports.keys(), index=0)
-to_city = st.selectbox("To (City)", options=airports.keys(), index=1)
-airline = st.selectbox("Airline", options=["IndiGo", "Air India", "Emirates", "Lufthansa", "Qatar Airways", "Other"])
-date = st.date_input("Date of Travel", datetime.today())
+with st.container():
+    st.markdown("""<div class='overlay-box'>""", unsafe_allow_html=True)
+    from_city = st.selectbox("From (City)", options=airports.keys(), index=0)
+    to_city = st.selectbox("To (City)", options=airports.keys(), index=1)
+    airline = st.selectbox("Airline", options=airline_list)
+    date = st.date_input("Date of Travel", datetime.today())
+    st.markdown("""</div>""", unsafe_allow_html=True)
 
 # Check Route button
 if st.button("Check Route Safety ✈️"):
