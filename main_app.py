@@ -8,7 +8,7 @@ from openai import OpenAI
 import pandas as pd
 
 # Configure OpenAI
-openai.api_key = st.secrets["openai"]["api_key"]
+openai_api_key = st.secrets["api_key"]
 # Page config
 st.set_page_config(page_title="SafeTrip", layout="wide")
 
