@@ -5,22 +5,24 @@ from geopy.distance import geodesic
 from shapely.geometry import Point, LineString
 import openai
 
-# Configure OpenAI
+# OpenAI API key from Streamlit secrets
 openai.api_key = st.secrets["openai_api_key"]
 
 # Page config
 st.set_page_config(page_title="SafeTrip", layout="wide")
 
-# Background styling with airplane image
+# Background and style
 st.markdown(
     f"""
     <style>
         .stApp {{
-            background: url("https://images.unsplash.com/photo-1504197885-609741792ce7") no-repeat center center fixed;
+            background: url("plane.jpg") no-repeat center center fixed;
             background-size: cover;
         }}
         .main-title h1 {{
             color: black !important;
+            display: inline;
+            vertical-align: middle;
         }}
         .scroll-box {{
             max-height: 200px;
@@ -36,8 +38,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# App title
-st.markdown("<h1 class='main-title'>SafeTrip – Fly Safer</h1>", unsafe_allow_html=True)
+# Header with logo and title
+col1, col2 = st.columns([1, 10])
+with col1:
+    st.image("black_circle_360x360.png", width=70)
+with col2:
+    st.markdown("<h1 class='main-title'>SafeTrip – Fly Safer</h1>", unsafe_allow_html=True)
+
 st.markdown("##### Check your flight route and cities for any nearby conflict zones.")
 st.markdown("---")
 
@@ -66,13 +73,13 @@ def get_airport_options():
 
 airports = get_airport_options()
 
-# UI inputs
+# UI Inputs
 from_city = st.selectbox("From (City)", options=airports.keys(), index=0)
 to_city = st.selectbox("To (City)", options=airports.keys(), index=1)
 airline = st.selectbox("Airline", options=["IndiGo", "Air India", "Emirates", "Lufthansa", "Qatar Airways", "Other"])
 date = st.date_input("Date of Travel", datetime.today())
 
-# Check Route button
+# Button: Check Route
 if st.button("Check Route Safety ✈️"):
     from_coords = (airports[from_city]['latitude_deg'], airports[from_city]['longitude_deg'])
     to_coords = (airports[to_city]['latitude_deg'], airports[to_city]['longitude_deg'])
