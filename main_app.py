@@ -8,7 +8,6 @@ from openai import OpenAI
 import pandas as pd
 
 # Configure OpenAI
-openai.api_key = st.secrets["openai_api_key"]
 client = OpenAI(api_key=st.secrets["openai_api_key"])
 # Page config
 st.set_page_config(page_title="SafeTrip", layout="wide")
@@ -20,7 +19,7 @@ st.markdown(
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
 
         .stApp {{
-            background: url("plane.jpg") no-repeat center center fixed;
+            background: url("https://wallpapershome.com/images/pages/ico_h/26675.jpg") no-repeat center center fixed;
             background-size: cover;
             font-family: 'Roboto', sans-serif;
         }}
