@@ -33,6 +33,21 @@
       font-size: 4em;
       margin: 0;
     }
+
+    .launch-btn {
+      padding: 1em 2em;
+      font-size: 1.2em;
+      background: rgba(0,0,0,0.6);
+      border: none;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.3s ease;
+    }
+
+    .launch-btn:hover {
+      background: rgba(0,0,0,0.8);
+    }
   </style>
 </head>
 <body>
@@ -43,6 +58,9 @@
 
   <div class="content">
     <h1>SafeTrip</h1>
+    <a href="https://bolt-new-safetrip-app.streamlit.app" target="_blank">
+      <button class="launch-btn">Launch the App</button>
+    </a>
   </div>
 
 </body>
