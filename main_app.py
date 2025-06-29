@@ -57,24 +57,28 @@ with st.container():
     st.markdown("---")
     st.markdown("""</div>""", unsafe_allow_html=True)
 
+# Static coordinates to avoid API calls
+STATIC_COORDS = {
+    "Iran": (32.4279, 53.6880),
+    "Ukraine": (48.3794, 31.1656),
+    "Russia": (61.5240, 105.3188),
+    "Israel": (31.0461, 34.8516),
+    "Gaza": (31.5018, 34.4663),
+    "Afghanistan": (33.9391, 67.7100),
+    "Lebanon": (33.8547, 35.8623),
+    "Iraq": (33.3152, 44.3661),
+    "Syria": (34.8021, 38.9968),
+}
+
 # Fetch coordinates using OpenAI
 @st.cache_data
-def fetch_country_coordinates(country_name):
-    try:
-        prompt = f"What are the latitude and longitude coordinates of {country_name}? Just give the answer in the format: latitude, longitude"
+def fetch_country_coordinates(country):
+    if country in STATIC_COORDS:
+        return STATIC_COORDS[country]
 
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        content = response.choices[0].message.content.strip()
-        parts = content.replace("°", "").replace(",", " ").split()
-        lat = float(parts[0])
-        lon = float(parts[1])
-        return lat, lon
-    except Exception as e:
-        st.warning(f"Could not fetch coordinates for {country_name}: {e}")
-        return None, None
+    # Otherwise skip API call to conserve quota
+    st.warning(f"No coordinates found for {country} and skipping API call to conserve usage.")
+    return None, None
 
 # Load airport and airline data
 @st.cache_data
