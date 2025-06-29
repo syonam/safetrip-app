@@ -12,42 +12,54 @@ openai_api_key = st.secrets["api_key"]
 # Page config
 st.set_page_config(page_title="SafeTrip", layout="wide")
 
-# Styling with background image, Roboto font, and transparent overlay
+# Background styling with airplane image and UI enhancements
 st.markdown(
     f"""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-        .stApp {{
-            background: url("https://wallpapershome.com/images/pages/ico_h/26675.jpg") no-repeat center center fixed;
-            background-size: cover;
+        html, body, .stApp {{
             font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url("plane.jpg") no-repeat center center fixed;
+            background-size: cover;
+            color: white;
         }}
 
-        .overlay-box {{
-            background-color: rgba(255, 255, 255, 0.85);
-            padding: 1.5rem;
-            border-radius: 12px;
-        }}
-
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stButton>button, .stSelectbox label {{
-            font-weight: 700 !important;
-            color: #000000 !important;
+        .main-title h1 {{
+            font-weight: 700;
+            font-size: 3em;
+            margin-bottom: 10px;
         }}
 
         .scroll-box {{
             max-height: 200px;
             overflow-y: auto;
             padding: 10px;
-            border: 1px solid #ccc;
             background-color: rgba(255, 255, 255, 0.85);
             border-radius: 8px;
             color: black;
+            font-weight: 500;
+        }}
+
+        .highlight-block {{
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }}
     </style>
     """,
     unsafe_allow_html=True
 )
+
+# Bolt logo and title
+st.image("black_circle_360x360.png", width=80)
+st.markdown("<div class='highlight-block'><h1 class='main-title'>SafeTrip – Fly Safer</h1>" +
+            "<p><strong>Check your flight route and cities for any nearby conflict zones.</strong></p></div>",
+            unsafe_allow_html=True)
 
 # App title
 with st.container():
