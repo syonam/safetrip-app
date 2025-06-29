@@ -76,8 +76,6 @@ def fetch_country_coordinates(country):
     if country in STATIC_COORDS:
         return STATIC_COORDS[country]
 
-    # Otherwise skip API call to conserve quota
-    st.warning(f"No coordinates found for {country} and skipping API call to conserve usage.")
     return None, None
 
 # Load airport and airline data
