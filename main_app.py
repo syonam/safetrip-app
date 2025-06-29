@@ -7,11 +7,11 @@ from shapely.geometry import Point, LineString
 # Streamlit Config
 st.set_page_config(page_title="SafeTrip", layout="centered")
 
-# Style
+# Custom Style
 st.markdown("""
     <style>
-        body, .main, .block-container {
-            background-color: #cce5ff;
+        .main, .block-container {
+            background-color: #f0f8ff;
         }
         .scroll-box {
             max-height: 200px;
@@ -21,20 +21,39 @@ st.markdown("""
             background-color: white;
             border-radius: 8px;
         }
+        .about-hover {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1em;
+            color: #555;
+            cursor: pointer;
+        }
+        .about-box {
+            display: none;
+            text-align: center;
+            background-color: #ffffffdd;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .about-hover:hover + .about-box {
+            display: block;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# Logo and Title
-st.image("logo.png", width=200)
-st.title("✈️ SafeTrip – Fly Safer")
-st.markdown("##### Check your flight route and cities for any nearby conflict zones.")
+# Title & Branding
+col1, col2 = st.columns([1, 5])
+with col1:
+    st.image("black_circle_360x360.png", width=60)
+with col2:
+    st.title("SafeTrip ✈️")
+
+st.markdown("#### Check if your flight route crosses any conflict zones")
 st.markdown("---")
 
-# About Button
-if st.button("ℹ️ About SafeTrip"):
-    st.switch_page("1_About.py")
-
-# Country coordinates (replacing geocoder)
+# Country coordinates (manually mapped)
 country_coords = {
     "Afghanistan": (33.9391, 67.7100),
     "Armenia": (40.0691, 45.0382),
@@ -59,25 +78,24 @@ country_coords = {
     "Ukraine": (48.3794, 31.1656)
 }
 
-# Load airports
+# Load Airports
 @st.cache_data
 def get_airport_options():
     return load_airports()
 
 airports = get_airport_options()
 
-# UI Elements
+# UI Inputs
 from_city = st.selectbox("From (City)", options=airports.keys(), index=0)
 to_city = st.selectbox("To (City)", options=airports.keys(), index=1)
-airline = st.selectbox("Airline", options=["IndiGo", "Air India", "Emirates", "Lufthansa", "Qatar Airways", "Other"])
+airline = st.selectbox("Airline", ["IndiGo", "Air India", "Emirates", "Lufthansa", "Qatar Airways", "Other"])
 date = st.date_input("Date of Travel", datetime.today())
 
-# Submit Button
+# Route Analysis
 if st.button("Check Route Safety ✈️"):
     from_coords = (airports[from_city]['latitude_deg'], airports[from_city]['longitude_deg'])
     to_coords = (airports[to_city]['latitude_deg'], airports[to_city]['longitude_deg'])
     red_zones = load_zones_from_json()
-
     route_line = LineString([from_coords[::-1], to_coords[::-1]])
     risky_zones = []
 
@@ -87,9 +105,10 @@ if st.button("Check Route Safety ✈️"):
             continue
         lat, lon = country_coords[country]
         point = Point(lon, lat)
-        dist_route = point.distance(route_line) * 111  # Convert degrees to km
+        dist_route = point.distance(route_line) * 111
         dist_from = geodesic((lat, lon), from_coords).km
         dist_to = geodesic((lat, lon), to_coords).km
+
         if min(dist_route, dist_from, dist_to) <= 500:
             zone['distance_km'] = round(min(dist_route, dist_from, dist_to), 1)
             risky_zones.append(zone)
@@ -102,3 +121,13 @@ if st.button("Check Route Safety ✈️"):
         for zone in risky_zones:
             st.markdown(f"**{zone['country']}** *(~{zone['distance_km']} km away)*")
             st.markdown(f"""<div class='scroll-box'>{zone['alert'][:1500]}</div>""", unsafe_allow_html=True)
+
+# Hoverable About Section
+st.markdown('<div class="about-hover">ℹ️ About SafeTrip</div>', unsafe_allow_html=True)
+st.markdown("""
+    <div class="about-box">
+        <strong>Why SafeTrip?</strong><br><br>
+        SafeTrip helps travelers identify nearby conflict zones on their air route, 
+        using real-time data and spatial analysis. Built for peace of mind ✈️
+    </div>
+""", unsafe_allow_html=True)
