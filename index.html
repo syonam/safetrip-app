@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SafeTrip</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    video.bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+    }
+
+    .content {
+      position: relative;
+      top: 40%;
+      text-align: center;
+    }
+
+    .content h1 {
+      font-size: 4em;
+      margin: 0;
+    }
+
+    .launch-btn {
+      padding: 1em 2em;
+      font-size: 1.2em;
+      background: rgba(0,0,0,0.6);
+      border: none;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .launch-btn:hover {
+      background: rgba(0,0,0,0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <video class="bg-video" autoplay loop muted playsinline>
+    <source src="13403854_1080_1920_30fps.mp4" type="video/mp4">
+  </video>
+
+  <div class="content">
+    <h1>SafeTrip</h1>
+    <a href="https://bolt-new-safetrip-app.streamlit.app/" target="_blank">
+      <button class="launch-btn">Launch App</button>
+    </a>
+  </div>
+
+</body>
+</html>
