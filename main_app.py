@@ -4,11 +4,12 @@ from red_zones import load_zones_from_json, load_airports
 from geopy.distance import geodesic
 from shapely.geometry import Point, LineString
 import openai
+from openai import OpenAI
 import pandas as pd
 
 # Configure OpenAI
 openai.api_key = st.secrets["openai_api_key"]
-
+client = OpenAI(api_key=st.secrets["openai_api_key"])
 # Page config
 st.set_page_config(page_title="SafeTrip", layout="wide")
 
@@ -61,15 +62,16 @@ with st.container():
 @st.cache_data
 def fetch_country_coordinates(country_name):
     try:
-        prompt = f"What are the latitude and longitude coordinates of {country_name}?"
-        response = openai.ChatCompletion.create(
+        prompt = f"What are the latitude and longitude coordinates of {country_name}? Just give the answer in the format: latitude, longitude"
+
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
         )
-        content = response.choices[0].message.content
-        parts = content.replace("°", "").replace(",", "").split()
-        lat = float([p for p in parts if p.replace('.', '', 1).isdigit()][0])
-        lon = float([p for p in parts if p.replace('.', '', 1).isdigit()][1])
+        content = response.choices[0].message.content.strip()
+        parts = content.replace("°", "").replace(",", " ").split()
+        lat = float(parts[0])
+        lon = float(parts[1])
         return lat, lon
     except Exception as e:
         st.warning(f"Could not fetch coordinates for {country_name}: {e}")
