@@ -3,16 +3,20 @@ from datetime import datetime
 from red_zones import load_zones_from_json, load_airports
 from geopy.distance import geodesic
 from shapely.geometry import Point, LineString
+import openai
+
+# Configure OpenAI
+openai.api_key = st.secrets["openai_api_key"]
 
 # Page config
 st.set_page_config(page_title="SafeTrip", layout="wide")
 
-# Custom background video/image with dark overlay for readability
+# Background styling with airplane image
 st.markdown(
     f"""
     <style>
         .stApp {{
-            background: url("13403854_1080_1920_30fps.mp4") no-repeat center center fixed;
+            background: url("https://images.unsplash.com/photo-1504197885-609741792ce7") no-repeat center center fixed;
             background-size: cover;
         }}
         .main-title h1 {{
@@ -32,27 +36,28 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Bolt logo and title
-col1, col2 = st.columns([1, 10])
-with col1:
-    st.image("black_circle_360x360.png", width=70)
-with col2:
-    st.markdown("<h1 class='main-title'>SafeTrip – Fly Safer</h1>", unsafe_allow_html=True)
-
+# App title
+st.markdown("<h1 class='main-title'>SafeTrip – Fly Safer</h1>", unsafe_allow_html=True)
 st.markdown("##### Check your flight route and cities for any nearby conflict zones.")
 st.markdown("---")
 
-# Country coordinates
-country_coords = {
-    "Afghanistan": (33.9391, 67.7100), "Armenia": (40.0691, 45.0382),
-    "Azerbaijan": (40.1431, 47.5769), "Belarus": (53.7098, 27.9534),
-    "Burkina Faso": (12.2383, -1.5616), "Ethiopia": (9.1450, 40.4897),
-    "Gaza": (31.5018, 34.4663), "Iran": (32.4279, 53.6880), "Iraq": (33.3152, 44.3661),
-    "Israel": (31.0461, 34.8516), "Lebanon": (33.8547, 35.8623), "Libya": (26.3351, 17.2283),
-    "Mali": (17.5707, -3.9962), "Niger": (17.6078, 8.0817), "North Korea": (40.3399, 127.5101),
-    "Russia": (61.5240, 105.3188), "Somalia": (5.1521, 46.1996), "South Sudan": (6.8770, 31.3070),
-    "Sudan": (12.8628, 30.2176), "Syria": (34.8021, 38.9968), "Ukraine": (48.3794, 31.1656)
-}
+# Fetch coordinates using OpenAI
+@st.cache_data
+def fetch_country_coordinates(country_name):
+    try:
+        prompt = f"What are the latitude and longitude coordinates of {country_name}?"
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        content = response.choices[0].message.content
+        parts = content.replace("°", "").replace(",", "").split()
+        lat = float([p for p in parts if p.replace('.', '', 1).isdigit()][0])
+        lon = float([p for p in parts if p.replace('.', '', 1).isdigit()][1])
+        return lat, lon
+    except Exception as e:
+        st.warning(f"Could not fetch coordinates for {country_name}: {e}")
+        return None, None
 
 # Load airport data
 @st.cache_data
@@ -78,9 +83,9 @@ if st.button("Check Route Safety ✈️"):
 
     for zone in red_zones:
         country = zone['country']
-        if country not in country_coords:
+        lat, lon = fetch_country_coordinates(country)
+        if not lat or not lon:
             continue
-        lat, lon = country_coords[country]
         point = Point(lon, lat)
         dist_route = point.distance(route_line) * 111
         dist_from = geodesic((lat, lon), from_coords).km
