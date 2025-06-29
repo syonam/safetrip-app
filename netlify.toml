@@ -1,4 +1,4 @@
 [[redirects]]
   from = "/*"
-  to = "https://bolt-new-safetrip-app.streamlit.app/:splat"
+  to = "https://safetrip-app.netlify.app/:splat"
   status = 200
