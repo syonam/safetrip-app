@@ -13,26 +13,26 @@ openai_api_key = st.secrets["api_key"]
 st.set_page_config(page_title="SafeTrip", layout="wide")
 
 # Background styling with airplane image and UI enhancements
-st.markdown(
-    f"""
+st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
 
-        html, body, .stApp {{
+        html, body, .stApp {
             font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                        url("plane.jpg") no-repeat center center fixed;
+            background: url("https://images.hdqwalls.com/download/plane-artwork-4k-4g-1280x2120.jpg") no-repeat center center fixed;
             background-size: cover;
-            color: white;
-        }}
+        }
 
-        .main-title h1 {{
-            font-weight: 700;
-            font-size: 3em;
-            margin-bottom: 10px;
-        }}
+        .glassbox {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        h1, h2, h3, h4, h5, h6, p, label {
+            color: white !important;
+            font-weight: 600;
+        }
 
         .scroll-box {{
             max-height: 200px;
