@@ -35,7 +35,7 @@ st.markdown(
 # Bolt logo and title
 col1, col2 = st.columns([1, 10])
 with col1:
-    st.image("bolt.png", width=70)
+    st.image("black_circle_360x360.png", width=70)
 with col2:
     st.markdown("<h1 class='main-title'>SafeTrip – Fly Safer</h1>", unsafe_allow_html=True)
 
